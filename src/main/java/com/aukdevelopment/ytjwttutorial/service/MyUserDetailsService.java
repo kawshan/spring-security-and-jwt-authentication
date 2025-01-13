@@ -1,27 +1,33 @@
 package com.aukdevelopment.ytjwttutorial.service;
 
+import com.aukdevelopment.ytjwttutorial.entity.UserEntity;
+import com.aukdevelopment.ytjwttutorial.repository.UserRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 
 public class MyUserDetailsService implements UserDetailsService {
 
-    private final PasswordEncoder passwordEncoder;
 
-    public MyUserDetailsService(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
+    private final UserRepository userRepository;
+
+    public MyUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity userData = userRepository.findByUsername(username).orElse(null);
+
+        if (userData==null) throw new UsernameNotFoundException("User not found");
+
         UserDetails user  = User.builder()
-                .username("amila")
-                .password(passwordEncoder.encode("amila"))
+                .username(userData.getUsername())
+                .password(userData.getPassword())
                 .build();
         return user;
     }

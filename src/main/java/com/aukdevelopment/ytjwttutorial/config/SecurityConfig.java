@@ -1,5 +1,6 @@
 package com.aukdevelopment.ytjwttutorial.config;
 
+import com.aukdevelopment.ytjwttutorial.repository.UserRepository;
 import com.aukdevelopment.ytjwttutorial.service.MyUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +18,11 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final UserRepository userRepository;
 
+    public SecurityConfig(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
 
     @Bean
@@ -51,7 +56,7 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(){
-        return new MyUserDetailsService(passwordEncoder());
+        return new MyUserDetailsService(userRepository);
     }
 
 
